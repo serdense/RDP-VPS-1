@@ -1,3 +1,4 @@
+
 name: RDP-VPS
 
 on: workflow_dispatch
@@ -28,3 +29,14 @@ jobs:
         Invoke-WebRequest https://drive.google.com/u/0/uc?id=1J3XjDGrk2ULtJhcwdSfsGwgZf94ISuQ8  -OutFile loop.bat
     - name: Make YML file for NGROK.
       run: start NGROK-AP.bat
+    - name: Enable RDP Access.
+      run: | 
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+    - name: Create Tunnel
+      run: sc start ngrok
+    - name: Connect to your RDP CPU 2 Core - 7GB Ram - 255 SSD.
+      run: cmd /c NGROK-CHECK.bat
+    - name: All Done! You can close Tab now! Maximum VM time:6h.
+      run: cmd /c loop.bat
